@@ -1,0 +1,35 @@
+:root {
+    --bg0:       #0d0e11;
+    --bg1:       #111318;
+    --bg2:       #161920;
+    --bg3:       #1c1f28;
+    --bg4:       #222633;
+    --border:    #2a2e3d;
+    --border2:   #353a4d;
+    --text0:     #cdd6f4;
+    --text1:     #a6adc8;
+    --text2:     #6c7086;
+    --accent:    #89b4fa;
+    --accent2:   #74c7ec;
+    --green:     #a6e3a1;
+    --yellow:    #f9e2af;
+    --red:       #f38ba8;
+    --mauve:     #cba6f7;
+    --peach:     #fab387;
+    --teal:      #94e2d5;
+    --gap:       6px;
+    --radius:    4px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg0);
+    color: var(--text0);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }

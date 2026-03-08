@@ -1,0 +1,10 @@
+/* ── MAIN LAYOUT ── */
+  #main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 240px 1fr 320px;
+    grid-template-rows: 1fr;
+    gap: var(--gap);
+    padding: var(--gap);
+    overflow: hidden;
+  }

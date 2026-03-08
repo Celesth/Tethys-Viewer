@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tethys — backup viewer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- styles — edit individual files, not this one -->
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/topbar.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/panels.css">
+<link rel="stylesheet" href="css/tree.css">
+<link rel="stylesheet" href="css/content.css">
+<link rel="stylesheet" href="css/thread.css">
+<link rel="stylesheet" href="css/embeds.css">
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <span class="logo">⬡ tethys</span>
+  <div class="workspace">
+    <div class="ws active">1</div>
+    <div class="ws">2</div>
+    <div class="ws">3</div>
+  </div>
+  <div class="divider"></div>
+  <span class="title" id="topbar-title">backup viewer</span>
+  <div class="right">
+    <div class="pill">threads: <span id="stat-threads">0</span></div>
+    <div class="pill">msgs: <span id="stat-msgs">0</span></div>
+    <div class="pill">forums: <span id="stat-forums">0</span></div>
+    <span id="clock">--:--</span>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- LEFT: FILE TREE -->
+  <div class="panel" id="panel-left">
+    <div class="panel-header">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+      <span class="panel-title">file tree</span>
+      <span class="panel-badge" id="tree-badge">empty</span>
+    </div>
+    <div class="panel-body" id="tree-body">
+      <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+        <span class="icon">📂</span>
+        <strong>open backup folder</strong>
+        click to add
+      </div>
+      <input type="file" id="file-input" multiple accept=".toml" webkitdirectory style="display:none">
+      <div id="tree-root"></div>
+
+      <!-- MODAL -->
+      <div class="modal-overlay hidden" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal" id="modal">
+          <div class="modal-title">
+            <span id="modal-title-text">new channel</span>
+            <span class="modal-close" onclick="closeModal()">✕</span>
+          </div>
+          <div>
+            <div class="modal-label" id="modal-label">channel name</div>
+            <input id="modal-input" placeholder="name..." autocomplete="off" onkeydown="if(event.key==='Enter')confirmModal()">
+          </div>
+          <div id="modal-type-row" style="display:none">
+            <div class="modal-label">type</div>
+            <select id="modal-type">
+              <option value="forum">💬 forum</option>
+              <option value="channel"># channel</option>
+            </select>
+          </div>
+          <div class="modal-btns">
+            <button class="btn" onclick="closeModal()">cancel</button>
+            <button class="btn primary" onclick="confirmModal()">create</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE: CONTENT -->
+  <div class="panel" id="panel-mid">
+    <div class="panel-header">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <span class="panel-title" id="mid-title">content</span>
+      <span class="panel-badge" id="mid-badge">—</span>
+    </div>
+
+    <div id="empty-state">
+      <div class="big">⬡</div>
+      <div class="label">no backup loaded</div>
+      <div class="sub">← select folder to begin</div>
+    </div>
+
+    <!-- FORUM VIEW -->
+    <div id="forum-view">
+      <div class="forum-header">
+        <div class="forum-name">
+          <span id="fv-name">—</span>
+          <span class="badge">forum</span>
+        </div>
+        <div class="forum-topic" id="fv-topic"></div>
+        <div class="forum-meta">
+          <div class="forum-meta-item">📌 <span id="fv-threads">0</span> posts</div>
+          <div class="forum-meta-item">💌 <span id="fv-msgs">0</span> messages</div>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input class="search-input" id="thread-search" placeholder="search posts..." oninput="filterThreads(this.value)">
+      </div>
+      <div class="tags-row" id="tags-row"></div>
+      <div id="threads-container"></div>
+    </div>
+
+    <!-- CHANNEL VIEW -->
+    <div id="channel-view">
+      <div class="channel-header">
+        <div>
+          <div class="channel-name"><span id="cv-hash">#</span><span id="cv-name">—</span></div>
+          <div class="channel-topic" id="cv-topic"></div>
+        </div>
+      </div>
+      <div id="messages-container"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: THREAD DETAIL -->
+  <div class="panel" id="panel-right">
+    <div class="panel-header">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <span class="panel-title">thread</span>
+      <span class="panel-badge" id="right-badge">—</span>
+    </div>
+    <div id="thread-detail-empty">
+      <div class="icon">🧵</div>
+      <span>select a post</span>
+    </div>
+    <div id="thread-detail">
+      <div class="thread-detail-header">
+        <div class="thread-detail-name" id="td-name">—</div>
+        <div class="thread-detail-meta" id="td-meta"></div>
+      </div>
+      <div id="thread-messages"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- STATUS BAR -->
+<div id="statusbar">
+  <div class="status-item"><div class="dot idle" id="status-dot"></div><span id="status-text">no backup loaded</span></div>
+  <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
+    <span id="img-timing" style="color:var(--text2);" title="image render time">imgs: —</span>
+    <span id="status-path" style="color:var(--text2)"></span>
+  </div>
+</div>
+
+<!-- scripts — load order matters, edit individual files not this one -->
+<script src="js/state.js"></script>
+<script src="js/db.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/clock.js"></script>
+<script src="js/toml.js"></script>
+<script src="js/embeds.js"></script>
+<script src="js/messages.js"></script>
+<script src="js/stats.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/tree.js"></script>
+<script src="js/forum.js"></script>
+<script src="js/channel.js"></script>
+<script src="js/folders.js"></script>
+
+</body>
+</html>

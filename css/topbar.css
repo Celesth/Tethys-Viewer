@@ -1,0 +1,42 @@
+/* ── TOP BAR (waybar style) ── */
+  #topbar {
+    height: 32px;
+    background: var(--bg1);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 16px;
+    flex-shrink: 0;
+    font-size: 11px;
+    color: var(--text2);
+  }
+  #topbar .logo {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+  }
+  #topbar .workspace {
+    display: flex; gap: 4px;
+  }
+  #topbar .ws {
+    width: 18px; height: 18px;
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: var(--text2); cursor: pointer;
+    transition: all 0.1s;
+  }
+  #topbar .ws.active { border-color: var(--accent); color: var(--accent); background: rgba(137,180,250,0.08); }
+  #topbar .divider { width: 1px; height: 16px; background: var(--border); }
+  #topbar .title { color: var(--text1); font-size: 11px; }
+  #topbar .right { margin-left: auto; display: flex; gap: 12px; align-items: center; }
+  #topbar .pill {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 3px; padding: 2px 8px;
+    font-size: 10px; color: var(--text2);
+  }
+  #topbar .pill span { color: var(--text1); }
+  #clock { font-size: 11px; color: var(--text1); }
