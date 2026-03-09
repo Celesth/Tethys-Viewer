@@ -11,6 +11,7 @@ function openForum(key) {
   document.getElementById('empty-state').style.display  = 'none';
   document.getElementById('forum-view').classList.add('visible');
   document.getElementById('channel-view').classList.remove('visible');
+  document.getElementById('recent-view')?.classList.remove('visible');
 
   const meta = f.meta ?? {};
   document.getElementById('fv-name').textContent  = meta.name ?? key.replace('forum-', '');
@@ -206,5 +207,102 @@ function sendComposerMessage() {
   if (cards.length) {
     const countEl = cards[0].querySelector('.thread-count');
     if (countEl) countEl.textContent = `${thread.messages.length} msgs`;
+  }
+}
+
+// ── RECENT VIEW ────────────────────────────────────────────────
+function fmtTimestamp(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  const mo = d.toLocaleString('en-US', { month: 'short' });
+  const day = d.getDate();
+  const yr  = d.getFullYear();
+  const hh  = String(d.getHours()).padStart(2, '0');
+  const mm  = String(d.getMinutes()).padStart(2, '0');
+  return `${mo} ${day}, ${yr} · ${hh}:${mm}`;
+}
+
+function openRecentView() {
+  document.getElementById('empty-state').style.display   = 'none';
+  document.getElementById('forum-view').classList.remove('visible');
+  document.getElementById('channel-view').classList.remove('visible');
+
+  const view = document.getElementById('recent-view');
+  view.classList.add('visible');
+
+  document.getElementById('mid-title').textContent = 'recent links';
+  const links = state.recentLinks;
+  document.getElementById('mid-badge').textContent = `${links.length} links`;
+
+  clearThreadDetail();
+
+  const container = document.getElementById('recent-container');
+  container.innerHTML = '';
+
+  if (!links.length) {
+    container.innerHTML = '<div class="no-data"><div class="icon">🔗</div>no links found</div>';
+    return;
+  }
+
+  for (const { msg, thread, forumKey, ts } of links) {
+    const card = document.createElement('div');
+    card.className = 'recent-card fade-in';
+
+    // Get the best preview source
+    const previews = msg.linkPreviews ?? [];
+    const firstP   = previews[0] ?? {};
+    const url      = firstP.url || extractUrls(msg.content ?? '')[0] || '';
+    const title    = firstP.title || msg.content?.slice(0, 80) || url;
+    const thumb    = firstP.image || msg.thumbnail || '';
+    const site     = firstP.site || (url ? (() => { try { return new URL(url).hostname.replace('www.',''); } catch { return ''; } })() : '');
+    const timeStr  = fmtTimestamp(msg.createdAt);
+    const author   = msg.author ?? '?';
+    const threadName = thread?.name ?? forumKey.split('::').pop().replace('forum-','').replace('channel-','');
+
+    card.innerHTML = `
+      <div class="recent-thumb-wrap">
+        ${thumb ? `<img class="recent-thumb" src="" alt="">` : `<div class="recent-thumb-ph">🔗</div>`}
+      </div>
+      <div class="recent-info">
+        <div class="recent-title">${escHtml(title)}</div>
+        <div class="recent-meta">
+          <span class="recent-site">${escHtml(site)}</span>
+          <span class="recent-sep">·</span>
+          <span class="recent-author">${escHtml(author)}</span>
+          <span class="recent-sep">·</span>
+          <span class="recent-time">${escHtml(timeStr)}</span>
+        </div>
+        <div class="recent-thread">in <span>${escHtml(threadName)}</span></div>
+      </div>
+      ${url ? `<a class="recent-open" href="${escHtml(url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗</a>` : ''}
+    `;
+
+    // Set img src via DOM (avoids & escaping corruption)
+    if (thumb) {
+      const img = card.querySelector('.recent-thumb');
+      img.src = thumb;
+      img.onerror = () => { img.style.display = 'none'; card.querySelector('.recent-thumb-wrap').innerHTML = '<div class="recent-thumb-ph">🔗</div>'; };
+    }
+
+    // Click → open thread detail if we have one
+    if (thread) {
+      card.onclick = () => {
+        // Find and activate the thread in whatever forum it belongs to
+        openForum(forumKey);
+        // Wait for render then click the matching card
+        setTimeout(() => {
+          const cards = document.querySelectorAll('.thread-card');
+          for (const c of cards) {
+            if (c.querySelector('.thread-title')?.textContent.trim() === thread.name) {
+              c.click(); break;
+            }
+          }
+        }, 50);
+      };
+      card.style.cursor = 'pointer';
+    }
+
+    container.appendChild(card);
   }
 }

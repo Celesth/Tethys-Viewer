@@ -170,3 +170,85 @@
   }
   #messages-container::-webkit-scrollbar { width: 3px; }
   #messages-container::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  /* ── RECENT VIEW ── */
+  #recent-view { display: none; flex-direction: column; height: 100%; }
+  #recent-view.visible { display: flex; }
+
+  .recent-header {
+    padding: 10px 14px 8px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .recent-header-title {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 15px; font-weight: 700; color: var(--text0);
+  }
+  .recent-header-sub {
+    font-size: 10px; color: var(--text2); margin-top: 3px;
+  }
+
+  #recent-container {
+    flex: 1; overflow-y: auto; padding: 8px 10px;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+
+  .recent-card {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    transition: border-color 0.12s, background 0.12s;
+    position: relative;
+  }
+  .recent-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .recent-card[style*="cursor: pointer"]:hover { border-color: var(--accent); }
+
+  .recent-thumb-wrap {
+    flex-shrink: 0;
+    width: 72px; height: 48px;
+    border-radius: 3px;
+    overflow: hidden;
+    background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .recent-thumb {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .recent-thumb-ph {
+    font-size: 18px; color: var(--text2);
+  }
+
+  .recent-info {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .recent-title {
+    font-size: 11px; font-weight: 600; color: var(--text0);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    line-height: 1.35;
+  }
+  .recent-meta {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+    font-size: 9px; color: var(--text2);
+  }
+  .recent-site { color: var(--accent2); }
+  .recent-sep  { color: var(--border2); }
+  .recent-time { color: var(--text2); font-variant-numeric: tabular-nums; }
+  .recent-author { color: var(--mauve); }
+  .recent-thread {
+    font-size: 9px; color: var(--text2);
+  }
+  .recent-thread span { color: var(--accent); }
+
+  .recent-open {
+    flex-shrink: 0;
+    align-self: center;
+    font-size: 12px; color: var(--text2);
+    text-decoration: none;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: color 0.1s, background 0.1s;
+  }
+  .recent-open:hover { color: var(--accent); background: rgba(137,180,250,0.08); }

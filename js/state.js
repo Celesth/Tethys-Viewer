@@ -8,6 +8,7 @@ const state = {
   allThreads: [],
   activeTag: null,
   activeThread: null,
+  recentLinks: [],   // [{ msg, thread, forumKey, ts }] sorted newest first
   folders: [],
   modalCtx: null,
 };

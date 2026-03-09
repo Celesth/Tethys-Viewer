@@ -8,6 +8,7 @@ function openChannel(key) {
   document.getElementById('empty-state').style.display = 'none';
   document.getElementById('forum-view').classList.remove('visible');
   document.getElementById('channel-view').classList.add('visible');
+  document.getElementById('recent-view')?.classList.remove('visible');
 
   const meta = c.meta ?? {};
   document.getElementById('cv-name').textContent  = meta.name ?? key.replace('channel-', '');

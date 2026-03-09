@@ -112,6 +112,33 @@ function buildTree() {
   }
 
   state.tree = { sections, forums, channels };
+
+  // ── Collect recent video/link messages across all forums ──────
+  const recentLinks = [];
+  for (const [fullKey, forum] of Object.entries(forums)) {
+    for (const thread of forum.threads) {
+      for (const msg of thread.messages ?? []) {
+        const hasLink = msg.thumbnail || (msg.linkPreviews ?? []).length > 0
+                     || extractUrls(msg.content ?? '').length > 0;
+        if (!hasLink) continue;
+        const ts = msg.createdAt ? new Date(msg.createdAt).getTime() : 0;
+        recentLinks.push({ msg, thread, forumKey: fullKey, ts });
+      }
+    }
+  }
+  // Also scan channel messages
+  for (const [fullKey, channel] of Object.entries(channels)) {
+    for (const msg of channel.messages ?? []) {
+      const hasLink = msg.thumbnail || (msg.linkPreviews ?? []).length > 0
+                   || extractUrls(msg.content ?? '').length > 0;
+      if (!hasLink) continue;
+      const ts = msg.createdAt ? new Date(msg.createdAt).getTime() : 0;
+      recentLinks.push({ msg, thread: null, forumKey: fullKey, ts });
+    }
+  }
+  recentLinks.sort((a, b) => b.ts - a.ts);
+  state.recentLinks = recentLinks;
+
   renderTree();
   updateStats();
 }
@@ -124,6 +151,42 @@ function renderTree() {
   const sections = state.tree.sections ?? [];
   let   totalItems = 0;
   let   autoOpened = false;
+
+  // ── RECENT (always first) ──────────────────────────────────────
+  const recentCount = state.recentLinks.length;
+  if (recentCount > 0) {
+    const recentCat = document.createElement('div');
+    recentCat.className = 'tree-category open tree-recent-cat';
+    recentCat.innerHTML = `
+      <span class="caret">▶</span>
+      <span class="cat-icon" style="font-size:11px">🕒</span>
+      <span style="flex:1;text-transform:uppercase;letter-spacing:0.08em;font-size:10px">recent</span>
+      <span style="font-size:9px;color:var(--text2);margin-right:4px">${recentCount}</span>`;
+
+    const recentChildren = document.createElement('div');
+    recentChildren.className = 'tree-children open';
+
+    recentCat.onclick = (e) => {
+      recentCat.classList.toggle('open');
+      recentChildren.classList.toggle('open');
+    };
+
+    const recentItem = document.createElement('div');
+    recentItem.className = 'tree-item tree-recent-item';
+    recentItem.innerHTML = `<span class="item-icon" style="color:var(--yellow)">📋</span><span class="item-name">all links</span><span class="item-count">${recentCount}</span>`;
+    recentItem.onclick = () => { setActiveTree(recentItem); openRecentView(); };
+    recentChildren.appendChild(recentItem);
+
+    root.appendChild(recentCat);
+    root.appendChild(recentChildren);
+
+    // Auto-open recent if no folders yet
+    if (!sections.length) {
+      recentItem.classList.add('active');
+      openRecentView();
+      autoOpened = true;
+    }
+  }
 
   for (const section of sections) {
     const { folderKey, sectionId, catMeta, forums, channels } = section;
