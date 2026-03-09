@@ -56,6 +56,11 @@
         click to add
       </div>
       <input type="file" id="file-input" multiple accept=".toml" webkitdirectory style="display:none">
+      <div class="tree-search-wrap">
+        <span class="tree-search-icon">🔍</span>
+        <input id="tree-search" placeholder="search channels..." oninput="filterTree(this.value)" autocomplete="off">
+        <span id="tree-search-clear" onclick="clearTreeSearch()">✕</span>
+      </div>
       <div id="tree-root"></div>
 
       <!-- MODAL -->
@@ -153,6 +158,14 @@
         <div class="thread-detail-meta" id="td-meta"></div>
       </div>
       <div id="thread-messages"></div>
+    </div>
+    <div class="thread-composer" id="thread-composer">
+      <textarea class="composer-input" id="composer-text" placeholder="add a message..." rows="3"
+        onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();sendComposerMessage();}"></textarea>
+      <div class="composer-row">
+        <input class="composer-url" id="composer-url" placeholder="link (optional)...">
+        <button class="composer-send" onclick="sendComposerMessage()">send ↵</button>
+      </div>
     </div>
   </div>
 

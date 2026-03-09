@@ -230,3 +230,51 @@ function setActiveTree(el) {
   document.querySelectorAll('.tree-item').forEach(e => e.classList.remove('active'));
   el.classList.add('active');
 }
+
+// ── TREE SEARCH ────────────────────────────────────────────────
+function filterTree(query) {
+  const clearBtn = document.getElementById('tree-search-clear');
+  clearBtn.style.display = query ? 'block' : 'none';
+
+  const q = query.trim().toLowerCase();
+  const root = document.getElementById('tree-root');
+
+  // Walk every category + its children block
+  const categories = root.querySelectorAll('.tree-category');
+  categories.forEach(catEl => {
+    // children div is the next sibling
+    const children = catEl.nextElementSibling;
+    if (!children || !children.classList.contains('tree-children')) return;
+
+    const items = children.querySelectorAll('.tree-item');
+    let anyVisible = false;
+
+    items.forEach(item => {
+      const name = item.querySelector('.item-name')?.textContent.toLowerCase() ?? '';
+      const match = !q || name.includes(q);
+      item.classList.toggle('hidden-by-search', !match);
+      if (match) anyVisible = true;
+    });
+
+    // Force-expand categories with matches; collapse empty ones during search
+    if (q) {
+      if (anyVisible) {
+        catEl.classList.add('open');
+        children.classList.add('open');
+      } else {
+        children.classList.remove('open');
+      }
+    } else {
+      // Restore default open state
+      catEl.classList.add('open');
+      children.classList.add('open');
+    }
+  });
+}
+
+function clearTreeSearch() {
+  const input = document.getElementById('tree-search');
+  input.value = '';
+  filterTree('');
+  input.focus();
+}

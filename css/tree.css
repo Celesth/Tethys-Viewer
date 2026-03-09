@@ -19,6 +19,37 @@
 
   #file-input { display: none; }
 
+  /* tree search */
+  .tree-search-wrap {
+    position: relative;
+    margin-bottom: 6px;
+  }
+  .tree-search-wrap .tree-search-icon {
+    position: absolute; left: 7px; top: 50%; transform: translateY(-50%);
+    color: var(--text2); font-size: 10px; pointer-events: none;
+  }
+  #tree-search {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text0);
+    font-family: inherit;
+    font-size: 11px;
+    padding: 5px 26px 5px 24px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  #tree-search:focus { border-color: var(--accent); }
+  #tree-search::placeholder { color: var(--text2); }
+  #tree-search-clear {
+    position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+    color: var(--text2); font-size: 10px; cursor: pointer;
+    display: none; line-height: 1;
+  }
+  #tree-search-clear:hover { color: var(--text0); }
+  .tree-item.hidden-by-search { display: none; }
+
   /* tree items */
   .tree-section {
     margin-bottom: 4px;

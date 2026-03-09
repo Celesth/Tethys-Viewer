@@ -128,6 +128,9 @@ function openThreadDetail(thread) {
   const td = document.getElementById('thread-detail');
   td.classList.add('visible');
 
+  // Store active thread reference for composer
+  state.activeThread = thread;
+
   document.getElementById('td-name').textContent = thread.name ?? 'untitled';
   document.getElementById('right-badge').textContent = `${thread.messages?.length ?? 0} msgs`;
 
@@ -146,10 +149,62 @@ function openThreadDetail(thread) {
   }
 
   renderMessages(thread.messages ?? [], document.getElementById('thread-messages'));
+
+  // Show composer
+  document.getElementById('thread-composer').classList.add('visible');
+  document.getElementById('composer-text').value = '';
+  document.getElementById('composer-url').value = '';
 }
 
 function clearThreadDetail() {
   document.getElementById('thread-detail-empty').style.display = 'flex';
   document.getElementById('thread-detail').classList.remove('visible');
+  document.getElementById('thread-composer').classList.remove('visible');
   document.getElementById('right-badge').textContent = '—';
+  state.activeThread = null;
+}
+
+function sendComposerMessage() {
+  const text    = document.getElementById('composer-text').value.trim();
+  const urlRaw  = document.getElementById('composer-url').value.trim();
+  const thread  = state.activeThread;
+  if (!thread || (!text && !urlRaw)) return;
+
+  // Build content string
+  const content = urlRaw ? (text ? `${text}\n${urlRaw}` : urlRaw) : text;
+
+  // Build message object matching TOML structure
+  const msg = {
+    author:       'you',
+    content,
+    createdAt:    new Date().toISOString(),
+    pinned:       false,
+    attachments:  '',
+    thumbnail:    '',
+    linkPreviews: urlRaw ? [{ url: urlRaw, title: '', desc: '', image: '', site: '' }] : [],
+    _local:       true,
+  };
+
+  if (!thread.messages) thread.messages = [];
+  thread.messages.push(msg);
+
+  // Re-render the thread
+  const container = document.getElementById('thread-messages');
+  renderMessages(thread.messages, container);
+  container.scrollTop = container.scrollHeight;
+
+  // Update badge
+  document.getElementById('right-badge').textContent = `${thread.messages.length} msgs`;
+
+  // Clear inputs
+  document.getElementById('composer-text').value = '';
+  document.getElementById('composer-url').value = '';
+  document.getElementById('composer-text').focus();
+
+  // Update thread card preview in middle panel
+  const cards = document.querySelectorAll('.thread-card.active');
+  if (cards.length) {
+    const countEl = cards[0].querySelector('.thread-count');
+    if (countEl) countEl.textContent = `${thread.messages.length} msgs`;
+  }
 }

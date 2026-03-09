@@ -7,6 +7,7 @@ const state = {
   currentThreads: [],
   allThreads: [],
   activeTag: null,
-  folders: [],        // [{ key, name, files }]
-  modalCtx: null,     // { mode: 'channel'|'thread', forumKey }
+  activeThread: null,
+  folders: [],
+  modalCtx: null,
 };

@@ -1,5 +1,8 @@
 /* ── RIGHT: THREAD DETAIL ── */
   #panel-right { grid-column: 3; }
+  #panel-right .panel-body {
+    display: flex; flex-direction: column;
+  }
   #thread-detail-empty {
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -7,7 +10,7 @@
   }
   #thread-detail-empty .icon { font-size: 24px; }
 
-  #thread-detail { display: none; flex-direction: column; height: 100%; }
+  #thread-detail { display: none; flex-direction: column; flex: 1; min-height: 0; }
   #thread-detail.visible { display: flex; }
 
   .thread-detail-header {
@@ -78,3 +81,69 @@
   }
   .msg-attachment:hover { border-color: var(--accent2); }
   .msg-empty { font-size: 10px; color: var(--text2); font-style: italic; }
+
+  /* ── THREAD COMPOSER ── */
+  .thread-composer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border);
+    padding: 8px 10px;
+    background: var(--bg1);
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .thread-composer.visible { display: flex; }
+
+  .composer-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text0);
+    font-family: inherit;
+    font-size: 12px;
+    padding: 7px 10px;
+    resize: none;
+    outline: none;
+    min-height: 60px;
+    max-height: 140px;
+    transition: border-color 0.15s;
+    line-height: 1.5;
+  }
+  .composer-input:focus { border-color: var(--accent); }
+  .composer-input::placeholder { color: var(--text2); }
+
+  .composer-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .composer-url {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text0);
+    font-family: inherit;
+    font-size: 11px;
+    padding: 5px 8px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .composer-url:focus { border-color: var(--accent2); }
+  .composer-url::placeholder { color: var(--text2); }
+
+  .composer-send {
+    background: var(--accent);
+    color: var(--bg0);
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+  .composer-send:hover { opacity: 0.85; }
+  .composer-send:active { opacity: 0.7; }
