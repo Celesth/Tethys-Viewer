@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>tethys — backup viewer</title>
+<title>tethys — viewer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 
 <!-- styles — edit individual files, not this one -->
@@ -24,11 +24,9 @@
   <span class="logo">⬡ tethys</span>
   <div class="workspace">
     <div class="ws active">1</div>
-    <div class="ws">2</div>
-    <div class="ws">3</div>
   </div>
   <div class="divider"></div>
-  <span class="title" id="topbar-title">backup viewer</span>
+  <span class="title" id="topbar-title">Private</span>
   <div class="right">
     <div class="pill">threads: <span id="stat-threads">0</span></div>
     <div class="pill">msgs: <span id="stat-msgs">0</span></div>
@@ -51,13 +49,13 @@
     </div>
     <div class="panel-body" id="tree-body">
       <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
-        <span class="icon">📂</span>
+        <span class="icon">+</span>
         <strong>open backup folder</strong>
         click to add
       </div>
       <input type="file" id="file-input" multiple accept=".toml" webkitdirectory style="display:none">
       <div class="tree-search-wrap">
-        <span class="tree-search-icon">🔍</span>
+        <span class="tree-search-icon">/ </span>
         <input id="tree-search" placeholder="search channels..." oninput="filterTree(this.value)" autocomplete="off">
         <span id="tree-search-clear" onclick="clearTreeSearch()">✕</span>
       </div>
@@ -130,10 +128,10 @@
     <div id="recent-view">
       <div class="recent-header">
         <div class="recent-header-title">
-          <span>🕒</span>
-          <span>recent links</span>
+          <span>⬡ </span>
+          <span>recent links:</span>
         </div>
-        <div class="recent-header-sub">links & videos from all folders, newest first</div>
+        <div class="recent-header-sub">Recently Added From Folders</div>
       </div>
       <div id="recent-container"></div>
     </div>
@@ -161,7 +159,7 @@
       <span class="panel-badge" id="right-badge">—</span>
     </div>
     <div id="thread-detail-empty">
-      <div class="icon">🧵</div>
+      <div class="icon">>.<</div>
       <span>select a post</span>
     </div>
     <div id="thread-detail">
